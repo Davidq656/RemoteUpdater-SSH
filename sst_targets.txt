@@ -1,0 +1,2 @@
+alias username ip
+example exampleuser exampleip
