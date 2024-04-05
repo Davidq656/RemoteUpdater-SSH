@@ -13,8 +13,52 @@ mkdir -p $LOG_DIR
 mkdir -p $OUTPUT_DIR_BASE
 
 manage_ssh_targets() {
-    # Implementierung bleibt gleich
+    echo "SSH-Ziele verwalten:"
+    echo "1. Neues SSH-Ziel hinzufügen"
+    echo "2. Bestehendes SSH-Ziel bearbeiten"
+    read -p "Option wählen (1 oder 2): " manage_option
+
+    case $manage_option in
+        1)
+            echo "Alias für das neue SSH-Ziel eingeben:"
+            read alias
+            echo "Benutzername für die SSH-Verbindung eingeben:"
+            read user
+            echo "IP-Adresse oder DNS-Name für $alias eingeben:"
+            read address
+            echo "$alias $user $address" >> $SSH_TARGETS_FILE
+            echo "SSH-Ziel $alias wurde hinzugefügt."
+            ;;
+        2)
+            echo "Verfügbare SSH-Ziele:"
+            IFS=$'\n' read -d '' -r -a lines < $SSH_TARGETS_FILE
+            for i in "${!lines[@]}"; do
+                echo "$((i+1)). ${lines[i]}"
+            done
+            echo "Nummer des zu bearbeitenden Ziels eingeben:"
+            read num
+            target="${lines[$((num-1))]}"
+            echo "Aktuelle Daten: $target"
+            echo "Neuen Alias für das SSH-Ziel eingeben (aktuell: ${target%% *}):"
+            read new_alias
+            echo "Neuen Benutzer für die SSH-Verbindung eingeben (aktuell: ${target%% * }):"
+            read new_user
+            echo "Neue IP-Adresse oder DNS-Name für $new_alias eingeben (aktuell: ${target##* }):"
+            read new_address
+            lines[$((num-1))]="$new_alias $new_user $new_address"
+            > $SSH_TARGETS_FILE
+            for line in "${lines[@]}"; do
+                echo "$line" >> $SSH_TARGETS_FILE
+            done
+            echo "SSH-Ziel wurde aktualisiert."
+            ;;
+        *)
+            echo "Ungültige Option."
+            return
+            ;;
+    esac
 }
+
 
 connect_to_server() {
     if [ ! -s $SSH_TARGETS_FILE ]; then
