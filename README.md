@@ -1,6 +1,6 @@
-RemoteUpdater-SSH README
+ssh-patchmanager README
 
-Der RemoteUpdater-SSH ist ein Bash-Skript zur Vereinfachung der Verwaltung und Ausführung von SSH-Befehlen auf entfernten Servern. Es bietet eine benutzerfreundliche Schnittstelle für das Hinzufügen, Bearbeiten und Herstellen von Verbindungen zu verschiedenen SSH-Zielen, was es besonders nützlich macht für Administratoren und Techniker, die regelmäßig mit mehreren Servern interagieren.
+Der ssh-patchmanager ist ein Bash-Skript zur Vereinfachung der Verwaltung und Ausführung von SSH-Befehlen auf entfernten Servern. Es bietet eine benutzerfreundliche Schnittstelle für das Hinzufügen, Bearbeiten und Herstellen von Verbindungen zu verschiedenen SSH-Zielen, was es besonders nützlich macht für Administratoren und Techniker, die regelmäßig mit mehreren Servern interagieren.
 Hauptfunktionen
 
     Hinzufügen von SSH-Zielen: Ermöglicht das Speichern neuer SSH-Ziele mit Alias, Benutzername und Adresse.
@@ -25,8 +25,8 @@ Setup
 
     Überprüfen Sie, ob Bash auf Ihrem System installiert ist.
     Platzieren Sie das Skript in einem gewünschten Verzeichnis.
-    Vergeben Sie Ausführungsrechte für das Skript: chmod +x RemoteUpdater-SSH.sh.
-    Starten Sie das Skript mit: ./RemoteUpdater-SSH.sh.
+    Vergeben Sie Ausführungsrechte für das Skript: chmod +x ssh-patchmanager.sh.
+    Starten Sie das Skript mit: ./ssh-patchmanager.sh.
 
 Sicherheitshinweise
 
@@ -35,4 +35,4 @@ Sicherheitshinweise
 
 Fazit
 
-RemoteUpdater-SSH erleichtert die Verwaltung von SSH-Verbindungen durch eine intuitive Schnittstelle und automatisiertes Logging. Es ist ein unverzichtbares Werkzeug für jeden, der regelmäßig Aufgaben auf mehreren Servern über SSH ausführt.
+ssh-patchmanager erleichtert die Verwaltung von SSH-Verbindungen durch eine intuitive Schnittstelle und automatisiertes Logging. Es ist ein unverzichtbares Werkzeug für jeden, der regelmäßig Aufgaben auf mehreren Servern über SSH ausführt.
