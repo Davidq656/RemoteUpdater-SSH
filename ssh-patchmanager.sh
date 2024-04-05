@@ -45,9 +45,7 @@ manage_ssh_targets() {
             read new_user
             echo "Neue IP-Adresse oder DNS-Name für $new_alias eingeben (aktuell: ${target##* }):"
             read new_address
-            # Ersetze die Zeile im Array
             lines[$((num-1))]="$new_alias $new_user $new_address"
-            # Schreibe das Array zurück in die Datei
             > $SSH_TARGETS_FILE
             for line in "${lines[@]}"; do
                 echo "$line" >> $SSH_TARGETS_FILE
@@ -76,37 +74,46 @@ connect_to_server() {
     target="${lines[$((num-1))]}"
     alias="${target%% *}"
     user="${target#* }"
-    user="${user%% *}"  # Extrahiere den Benutzernamen
+    user="${user%% *}"
     address="${target##* }"
 
     output_dir="$OUTPUT_DIR_BASE/$alias"
     mkdir -p "$output_dir"
 
     echo "Verbindung zu $alias ($address) wird hergestellt..."
-    while true; do
-        echo "Wählen Sie einen Befehl zur Ausführung:"
+    echo "Wählen Sie eine Option:"
+    echo "1. Vordefinierten Befehl ausführen"
+    echo "2. Eigenen Befehl eingeben"
+    read option
+
+    if [ "$option" == "1" ]; then
+        echo "Wählen Sie einen vordefinierten Befehl zur Ausführung:"
         for i in "${!COMMANDS[@]}"; do
             echo "$((i+1)). ${COMMANDS[i]}"
         done
-        echo "Geben Sie die Nummer des Befehls ein (oder 'exit' zum Zurückkehren):"
         read cmd_num
-        if [[ "$cmd_num" == "exit" ]]; then
-            break
-        fi
         selected_cmd="${COMMANDS[$((cmd_num-1))]}"
-        if [ -z "$selected_cmd" ]; then
-            echo "Ungültige Auswahl. Bitte versuchen Sie es erneut."
-            continue
-        fi
-        output_file="$output_dir/command_output_$(date +%Y-%m-%d_%H-%M-%S).txt"
-        ssh -t ${user}@${address} "$selected_cmd" | tee "$output_file" 2>&1
-        exit_code=${PIPESTATUS[0]}
-        log_file="$LOG_DIR/${alias}_log.csv"
-        if [ ! -f $log_file ]; then
-            echo "timestamp,alias,user,address,local_user,command,output_file,exit_code" > $log_file
-        fi
-        echo "$(date),$alias,$user,$address,$(whoami),\"$selected_cmd\",\"$output_file\",$exit_code" >> $log_file
-    done
+    elif [ "$option" == "2" ]; then
+        echo "Geben Sie Ihren Befehl ein:"
+        read selected_cmd
+    else
+        echo "Ungültige Option. Verbindung wird beendet."
+        return
+    fi
+
+    if [[ -z "$selected_cmd" ]]; then
+        echo "Kein gültiger Befehl ausgewählt. Bitte versuchen Sie es erneut."
+        return
+    fi
+
+    output_file="$output_dir/command_output_$(date +%Y-%m-%d_%H-%M-%S).txt"
+    ssh -t ${user}@${address} "$selected_cmd" | tee "$output_file" 2>&1
+    exit_code=${PIPESTATUS[0]}
+    log_file="$LOG_DIR/${alias}_log.csv"
+    if [ ! -f $log_file ]; then
+        echo "timestamp,alias,user,address,local_user,command,output_file,exit_code" > $log_file
+    fi
+    echo "$(date),$alias,$user,$address,$(whoami),\"$selected_cmd\",\"$output_file\",$exit_code" >> $log_file
 }
 
 while true; do
